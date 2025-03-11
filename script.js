@@ -121,8 +121,8 @@ function cargarTratamientosMasDemandados() {
   fetch("http://127.0.0.1:8000/tratamientos-mas-demandados")
       .then(response => response.json())
       .then(data => {
-          let lista = document.getElementById("tratamientos-demandados");
-          lista.innerHTML = ""; // Limpiar contenido previo
+          let lista = document.getElementById("lista-tratamientos");
+          lista.innerHTML = ""; // Limpiar lista antes de agregar nuevos datos
           data.forEach(item => {
               let li = document.createElement("li");
               li.textContent = `${item.tratamiento}: ${item.cantidad} veces`;
@@ -131,6 +131,7 @@ function cargarTratamientosMasDemandados() {
       })
       .catch(error => console.error("Error cargando tratamientos más demandados:", error));
 }
+
 
 
 // ✅ 7️⃣ Lista de Doctores
