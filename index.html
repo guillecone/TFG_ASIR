@@ -24,10 +24,9 @@
     </div>
     <nav>
       <ul>
-        <li class="active"><i class="fas fa-chart-line"></i> Dashboard</li>
-        <li><i class="fas fa-table"></i> Tables</li>
-        <li><i class="fas fa-user-md"></i> Doctores</li>
-        <li><i class="fas fa-cogs"></i> Configuración</li>
+        <li class="active">Dashboard</li>
+        <li>Doctores</li>
+        <li>Configuración</li>
       </ul>
     </nav>
   </aside>
@@ -40,57 +39,67 @@
 
     <!-- Contenedor de Tarjetas de Información -->
     <div class="dashboard-cards">
-      <div class="card">
+      <div class="chart-card">
         <h4>Ingresos Mensuales</h4>
-        <p id="ingresos">$0</p>
+        <canvas id="chart-ingresos"></canvas>
       </div>
-      <div class="card">
-        <h4>Nuevos Pacientes</h4>
+
+      <div class="card card-pacientes">
+        <div class="card-header">
+          <h4>Nuevos Pacientes</h4>
+          <i id="icono-pacientes" class="fas fa-user-plus"></i> <!-- Icono Dinámico -->
+        </div>
         <p id="nuevos-pacientes">0</p>
       </div>
     </div>
 
     <div class="dashboard-cards">
-      <div class="card">
+      <div class="chart-card">
         <h4>Citas por Doctor</h4>
-        <ul id="citas-doctores"></ul>
+        <canvas id="chart-citas-doctor"></canvas>
       </div>
       <div class="card">
         <h4>Tiempo Medio Entre Consultas</h4>
-        <p id="tiempo-consultas">No disponible</p>
+        <div class="progress-container">
+          <div class="progress-bar" id="progress-bar-consultas"></div>
+        </div>
+        <p id="tiempo-consultas">Cargando...</p>
       </div>
-    </div>
 
-    <!-- Gráficos -->
-    <div class="charts-container">
+
+      <!-- Gráficos -->
       <div class="chart-card">
-        <h4>Citas atendidas vs. canceladas</h4>
+        <h4>Citas Atendidas vs. Canceladas</h4>
         <canvas id="chart-citas"></canvas>
       </div>
 
-      <div class="chart-card">
-        <h4>Tratamientos más demandados</h4>
-        <ul id="lista-tratamientos"></ul>  <!-- 🔹 Este ID debe coincidir con el script -->
-    </div>
-    
 
-    <!-- Tabla de citas recientes -->
-    <div class="table-container">
-      <h4>Citas Recientes</h4>
-      <table>
+      <div class="chart-card">
+        <h4>Tratamientos más Demandados</h4>
+        <canvas id="chart-tratamientos"></canvas>
+      </div>
+
+
+
+      <!-- Tabla de citas recientes -->
+      <div class="table-container full-width">
+        <h4>Citas Recientes</h4>
+        <table>
           <thead>
-              <tr>
-                  <th>Paciente</th>
-                  <th>Doctor</th>
-                  <th>Fecha</th>
-                  <th>Estado</th>
-              </tr>
+            <tr>
+              <th>Paciente</th>
+              <th>Doctor</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+            </tr>
           </thead>
-          <tbody id="citas-recientes">  <!-- Este ID es clave -->
+          <tbody id="citas-recientes">
+            <!-- Se llenará con datos dinámicos -->
           </tbody>
-      </table>
-  </div>
-  
+        </table>
+      </div>
+
+
 
   </main>
 
