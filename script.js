@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
   cargarTratamientosMasDemandados();
   cargarDoctores();
   cargarCitasRecientes();
+  cargarGraficoTratamientos();
 });
 
 // ✅ 1️⃣ Ingresos Mensuales
@@ -86,47 +87,30 @@ let chartTratamientos = null;
 
 // 📌 Citas atendidas vs. canceladas
 function cargarCitasAtendidasVsCanceladas() {
-    fetch("http://127.0.0.1:8000/citas/atendidas-canceladas")
-        .then(response => response.json())
-        .then(data => {
-            let canvas = document.getElementById("chart-citas");
-            if (!canvas) {
-                console.error("❌ Error: No se encontró el canvas con id 'chart-citas'");
-                return;
-            }
+  fetch("http://127.0.0.1:8000/citas/atendidas-canceladas")
+      .then(response => response.json())
+      .then(data => {
+          let ctx = document.getElementById("chart-citas").getContext("2d");
 
-            // Resetear canvas para evitar crecimiento infinito
-            canvas.parentNode.innerHTML = '<canvas id="chart-citas"></canvas>';
-            canvas = document.getElementById("chart-citas");
-            let ctx = canvas.getContext("2d");
+          // Verifica si ya existe una instancia previa del gráfico para evitar duplicados
+          if (window.chartCitas) {
+              window.chartCitas.destroy();
+          }
 
-            if (chartCitas) {
-                chartCitas.destroy();
-            }
-
-            chartCitas = new Chart(ctx, {
-                type: "doughnut",
-                data: {
-                    labels: ["Atendidas", "Canceladas"],
-                    datasets: [{
-                        label: "Número de Citas",
-                        data: [data[0].atendidas, data[0].canceladas],
-                        backgroundColor: ["#43A047", "#FF5722"]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: "top"
-                        }
-                    }
-                }
-            });
-        })
-        .catch(error => console.error("❌ Error cargando citas atendidas vs. canceladas:", error));
+          window.chartCitas = new Chart(ctx, {
+              type: "doughnut",
+              data: {
+                  labels: ["Atendidas", "Canceladas", "Pendientes"],
+                  datasets: [{
+                      data: [data.atendidas, data.canceladas, data.pendientes],
+                      backgroundColor: ["#43A047", "#E53935", "#FFB300"]
+                  }]
+              },
+          });
+      })
+      .catch(error => console.error("Error cargando citas atendidas vs. canceladas:", error));
 }
+
 
 // 📌 Tratamientos más demandados
 function cargarTratamientosMasDemandados() {
@@ -134,7 +118,7 @@ function cargarTratamientosMasDemandados() {
       .then(response => response.json())
       .then(data => {
           let lista = document.getElementById("lista-tratamientos");
-          lista.innerHTML = ""; // Limpiar lista antes de agregar nuevos datos
+          lista.innerHTML = ""; // Limpia la lista antes de agregar nuevos datos
           data.forEach(item => {
               let li = document.createElement("li");
               li.textContent = `${item.tratamiento}: ${item.cantidad} veces`;
@@ -146,43 +130,135 @@ function cargarTratamientosMasDemandados() {
 
 
 
-// ✅ 7️⃣ Lista de Doctores
-document.addEventListener("DOMContentLoaded", function () {
-  cargarDoctores();
-});
-
-function cargarDoctores() {
-  fetch("http://127.0.0.1:8000/doctores")
+function cargarCitasAtendidasVsCanceladas() {
+  fetch("http://127.0.0.1:8000/citas/atendidas-canceladas")
       .then(response => response.json())
       .then(data => {
-          let lista = document.getElementById("doctores");
-          lista.innerHTML = ""; // Limpiar antes de agregar elementos nuevos
-          data.forEach(item => {
-              let li = document.createElement("li");
-              li.textContent = `${item.nombre}`;
-              lista.appendChild(li);
+          let ctx = document.getElementById("chart-citas").getContext("2d");
+
+          // Eliminar gráfico anterior si ya existe
+          if (window.chartCitas) {
+              window.chartCitas.destroy();
+          }
+
+          window.chartCitas = new Chart(ctx, {
+              type: "doughnut",
+              data: {
+                  labels: ["Atendidas", "Canceladas", "Pendientes"],
+                  datasets: [{
+                      data: [data.atendidas, data.canceladas, data.pendientes],
+                      backgroundColor: ["#43A047", "#E53935", "#FFB300"]
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: true,  // Mantiene el ratio
+                  aspectRatio: 2,  // Reduce el tamaño
+                  plugins: {
+                      legend: {
+                          position: "top",
+                          labels: {
+                              font: {
+                                  size: 14
+                              }
+                          }
+                      }
+                  }
+              }
           });
       })
-      .catch(error => console.error("Error cargando doctores:", error));
+      .catch(error => console.error("Error cargando citas atendidas vs. canceladas:", error));
 }
 
+function cargarGraficoTratamientos() {
+  fetch("http://127.0.0.1:8000/tratamientos-mas-demandados")
+      .then(response => response.json())
+      .then(data => {
+          console.log("📊 Datos recibidos:", data);
+          
+          if (!data || data.length === 0) {
+              console.error("❌ No hay datos para mostrar en el gráfico.");
+              return;
+          }
+
+          let ctx = document.getElementById("chart-tratamientos").getContext("2d");
+          if (!ctx) {
+              console.error("❌ No se encontró el canvas con id 'chart-tratamientos'");
+              return;
+          }
+
+          let tratamientos = data.map(item => item.tratamiento);
+          let cantidades = data.map(item => item.cantidad);
+
+          new Chart(ctx, {
+              type: "bar",
+              data: {
+                  labels: tratamientos,
+                  datasets: [{
+                      label: "Cantidad",
+                      data: cantidades,
+                      backgroundColor: ["#3498db", "#2ecc71", "#e74c3c"],
+                      borderColor: ["#2980b9", "#27ae60", "#c0392b"],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                      y: { beginAtZero: true }
+                  }
+              }
+          });
+      })
+      .catch(error => console.error("❌ Error cargando tratamientos más demandados:", error));
+}
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  let cards = document.querySelectorAll(".card");
+  let observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+          if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+          }
+      });
+  }, { threshold: 0.5 });
+
+  cards.forEach(card => observer.observe(card));
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const sidebar = document.querySelector(".sidebar");
+  const toggleBtn = document.createElement("button");
+
+  toggleBtn.innerHTML = "☰";
+  toggleBtn.classList.add("sidebar-toggle");
+  document.body.appendChild(toggleBtn);
+
+  toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("active");
+  });
+});
 
 function cargarCitasRecientes() {
   fetch("http://127.0.0.1:8000/citas-recientes")
       .then(response => response.json())
       .then(data => {
-          console.log("Citas recientes:", data); // Verificar en consola
+          console.log("📅 Datos de citas recientes:", data);
 
           let tabla = document.getElementById("citas-recientes");
+
           if (!tabla) {
-              console.error("Elemento con ID 'citas-recientes' no encontrado en el HTML.");
+              console.error("❌ No se encontró la tabla 'citas-recientes'.");
               return;
           }
 
-          tabla.innerHTML = ""; // 🔹 Limpiar antes de insertar datos nuevos
+          tabla.innerHTML = ""; // Limpiar antes de agregar nuevos datos
 
           if (data.length === 0) {
-              tabla.innerHTML = `<tr><td colspan="4">No hay citas recientes</td></tr>`;
+              tabla.innerHTML = "<tr><td colspan='4'>No hay citas recientes.</td></tr>";
               return;
           }
 
@@ -197,11 +273,42 @@ function cargarCitasRecientes() {
               tabla.appendChild(fila);
           });
       })
-      .catch(error => {
-          console.error("Error cargando citas recientes:", error);
-          let tabla = document.getElementById("citas-recientes");
-          if (tabla) {
-              tabla.innerHTML = `<tr><td colspan="4">Error al cargar datos</td></tr>`;
-          }
-      });
+      .catch(error => console.error("❌ Error cargando citas recientes:", error));
 }
+
+// Ejecutar la función cuando la página cargue
+document.addEventListener("DOMContentLoaded", cargarCitasRecientes);
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const searchInput = document.createElement("input");
+  searchInput.placeholder = "Buscar citas...";  
+  document.querySelector(".table-container").prepend(searchInput);
+
+  searchInput.addEventListener("keyup", function () {
+      let filter = searchInput.value.toLowerCase();
+      let rows = document.querySelectorAll("#citas-recientes tr");
+      rows.forEach(row => {
+          let text = row.innerText.toLowerCase();
+          row.style.display = text.includes(filter) ? "" : "none";
+      });
+  });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const cards = document.querySelectorAll(".card");
+  cards.forEach((card, index) => {
+      setTimeout(() => {
+          card.classList.add("visible");
+      }, index * 150);
+  });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll("input").forEach(el => {
+      if (el.placeholder === "Buscar citas...") {
+          el.remove();  // 🔥 Esto lo eliminará automáticamente
+          console.log("Eliminado: Buscar citas...");
+      }
+  });
+});

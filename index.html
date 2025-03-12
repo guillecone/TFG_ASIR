@@ -1,94 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ConesaDental Dashboard</title>
-    
-    <!-- Estilos y fuentes -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
 
-    <!-- Chart.js para gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConesaDental Dashboard</title>
+
+  <!-- Estilos y fuentes -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Chart.js para gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <h2 class="logo">CONCEPT</h2>
-        <nav>
-            <ul>
-                <li class="active"><i class="fas fa-chart-line"></i> Dashboard</li>
-                <li><i class="fas fa-table"></i> Tables</li>
-                <li><i class="fas fa-user-md"></i> Doctores</li>
-                <li><i class="fas fa-cogs"></i> Configuración</li>
-            </ul>
-        </nav>
-    </aside>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2 class="logo">ConesaDental</h2>
+    </div>
+    <nav>
+      <ul>
+        <li class="active"><i class="fas fa-chart-line"></i> Dashboard</li>
+        <li><i class="fas fa-table"></i> Tables</li>
+        <li><i class="fas fa-user-md"></i> Doctores</li>
+        <li><i class="fas fa-cogs"></i> Configuración</li>
+      </ul>
+    </nav>
+  </aside>
 
-    <!-- Contenido Principal -->
-    <main class="main-content">
-        <header>
-            <h1>ConesaDental Dashboard</h1>
-        </header>
+  <!-- Contenido Principal -->
+  <main class="main-content">
+    <header class="dashboard-header">
+      <h1>Dashboard Overview</h1>
+    </header>
 
-        <!-- Tarjetas de información -->
-        <div class="dashboard-cards">
-            <div class="card">
-                <h4>Ingresos Mensuales</h4>
-                <p id="ingresos"></p>
-            </div>
-            <div class="card">
-                <h4>Nuevos Pacientes</h4>
-                <p id="nuevos-pacientes"></p>
-            </div>
-            <div class="card">
-                <h4>Citas por Doctor</h4>
-                <ul id="citas-doctores"></ul>
-            </div>
-            <div class="card">
-                <h4>Tiempo Medio Entre Consultas</h4>
-                <p id="tiempo-consultas">No disponible</p>
-            </div>
-        </div>
+    <!-- Contenedor de Tarjetas de Información -->
+    <div class="dashboard-cards">
+      <div class="card">
+        <h4>Ingresos Mensuales</h4>
+        <p id="ingresos">$0</p>
+      </div>
+      <div class="card">
+        <h4>Nuevos Pacientes</h4>
+        <p id="nuevos-pacientes">0</p>
+      </div>
+    </div>
 
-        <!-- Gráficos -->
-        <div class="charts-container">
-            <div class="chart-card">
-                <h4>Citas atendidas vs. canceladas</h4>
-                <canvas id="chart-citas"></canvas>
-            </div>
+    <div class="dashboard-cards">
+      <div class="card">
+        <h4>Citas por Doctor</h4>
+        <ul id="citas-doctores"></ul>
+      </div>
+      <div class="card">
+        <h4>Tiempo Medio Entre Consultas</h4>
+        <p id="tiempo-consultas">No disponible</p>
+      </div>
+    </div>
 
-            <div class="chart-card">
-                <h4>Tratamientos más demandados</h4>
-                <ul id="lista-tratamientos">
-              </ul>
-            </div>
-        </div>
+    <!-- Gráficos -->
+    <div class="charts-container">
+      <div class="chart-card">
+        <h4>Citas atendidas vs. canceladas</h4>
+        <canvas id="chart-citas"></canvas>
+      </div>
 
-        <!-- Tabla de citas recientes -->
-        <div class="table-container">
-            <h4>Citas Recientes</h4>
-            <table>
-              <thead>
-                <tr>
-                    <th>Paciente</th>
-                    <th>Doctor</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody id="citas-recientes">  <!-- 🔹 Este ID es importante -->
-                <!-- Aquí se llenarán los datos -->
-            </tbody>
-        </table>
-        </div>
-    </main>
+      <div class="chart-card">
+        <h4>Tratamientos más demandados</h4>
+        <ul id="lista-tratamientos"></ul>  <!-- 🔹 Este ID debe coincidir con el script -->
+    </div>
+    
 
-    <script src="script.js"></script>
+    <!-- Tabla de citas recientes -->
+    <div class="table-container">
+      <h4>Citas Recientes</h4>
+      <table>
+          <thead>
+              <tr>
+                  <th>Paciente</th>
+                  <th>Doctor</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+              </tr>
+          </thead>
+          <tbody id="citas-recientes">  <!-- Este ID es clave -->
+          </tbody>
+      </table>
+  </div>
+  
+
+  </main>
+
+  <script src="script.js"></script>
 
 </body>
-</html>
 
+</html>

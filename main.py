@@ -113,7 +113,7 @@ def tiempo_entre_consultas():
 
 # ✅ 5️⃣ Citas Atendidas vs. Canceladas
 @app.get("/citas/atendidas-canceladas")
-def citas_atendidas_vs_canceladas():
+def obtener_estadisticas_citas():
     conn = mysql.connector.connect(
         host=os.getenv("DB_HOST"),
         user=os.getenv("DB_USER"),
@@ -121,15 +121,19 @@ def citas_atendidas_vs_canceladas():
         database=os.getenv("DB_NAME")
     )
     cursor = conn.cursor(dictionary=True)
+
     cursor.execute("""
         SELECT 
             SUM(CASE WHEN estado = 'confirmada' THEN 1 ELSE 0 END) AS atendidas,
-            SUM(CASE WHEN estado = 'cancelada' THEN 1 ELSE 0 END) AS canceladas
-        FROM citas;
+            SUM(CASE WHEN estado = 'cancelada' THEN 1 ELSE 0 END) AS canceladas,
+            SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) AS pendientes
+        FROM citas
     """)
+    
     resultado = cursor.fetchone()
     conn.close()
-    return [{"atendidas": resultado["atendidas"], "canceladas": resultado["canceladas"]}]
+    
+    return resultado
 
 
 # ✅ 6️⃣ Tratamientos Más Demandados
