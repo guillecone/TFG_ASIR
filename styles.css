@@ -11,8 +11,13 @@ body {
   background: #1f2a40;
   color: white;
   padding: 20px;
-  height: 100vh;
+  height: 100vh;  /* Ajusta la altura al 100% de la pantalla */
+  position: fixed;  /* Fija la sidebar en su lugar */
+  top: 0;
+  left: 0;
+  overflow-y: auto; /* Permite desplazamiento si el contenido es más largo */
 }
+
 
 .sidebar .logo {
   font-size: 24px;

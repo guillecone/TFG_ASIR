@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   cargarCitasAtendidasVsCanceladas();
   cargarTratamientosMasDemandados();
   cargarDoctores();
+  cargarCitasRecientes();
 });
 
 // ✅ 1️⃣ Ingresos Mensuales
@@ -33,9 +34,13 @@ function cargarNuevosPacientes() {
   fetch("http://127.0.0.1:8000/nuevos-pacientes")
       .then(response => response.json())
       .then(data => {
-          document.getElementById("nuevos-pacientes").innerText = data[0]?.total_pacientes ?? "No disponible";
+          console.log("Datos de nuevos pacientes:", data); // 🔹 Verificar en consola
+          document.getElementById("nuevos-pacientes").innerText = data.total_pacientes;
       })
-      .catch(error => console.error("Error cargando nuevos pacientes:", error));
+      .catch(error => {
+          console.error("Error cargando nuevos pacientes:", error);
+          document.getElementById("nuevos-pacientes").innerText = "No disponible";
+      });
 }
 
 // ✅ 3️⃣ Citas por Doctor
@@ -43,20 +48,27 @@ function cargarCitasPorDoctor() {
   fetch("http://127.0.0.1:8000/citas/doctores")
       .then(response => response.json())
       .then(data => {
+          console.log("Citas por doctor:", data); // Verificar en consola
           let lista = document.getElementById("citas-doctores");
           lista.innerHTML = "";
-          if (data.length > 0) {
-              data.forEach(item => {
-                  let li = document.createElement("li");
-                  li.textContent = `${item.doctor}: ${item.total_citas} citas`;
-                  lista.appendChild(li);
-              });
-          } else {
+
+          if (data.length === 0) {
               lista.innerHTML = "<li>No hay citas registradas</li>";
+              return;
           }
+
+          data.forEach(item => {
+              let li = document.createElement("li");
+              li.textContent = `${item.doctor}: ${item.total_citas} citas`;
+              lista.appendChild(li);
+          });
       })
-      .catch(error => console.error("Error cargando citas por doctor:", error));
+      .catch(error => {
+          console.error("Error cargando citas por doctor:", error);
+          document.getElementById("citas-doctores").innerHTML = "<li>Error al cargar datos</li>";
+      });
 }
+
 
 // ✅ 4️⃣ Tiempo Medio entre Consultas
 function cargarTiempoMedioConsultas() {
@@ -155,3 +167,41 @@ function cargarDoctores() {
 }
 
 
+function cargarCitasRecientes() {
+  fetch("http://127.0.0.1:8000/citas-recientes")
+      .then(response => response.json())
+      .then(data => {
+          console.log("Citas recientes:", data); // Verificar en consola
+
+          let tabla = document.getElementById("citas-recientes");
+          if (!tabla) {
+              console.error("Elemento con ID 'citas-recientes' no encontrado en el HTML.");
+              return;
+          }
+
+          tabla.innerHTML = ""; // 🔹 Limpiar antes de insertar datos nuevos
+
+          if (data.length === 0) {
+              tabla.innerHTML = `<tr><td colspan="4">No hay citas recientes</td></tr>`;
+              return;
+          }
+
+          data.forEach(cita => {
+              let fila = document.createElement("tr");
+              fila.innerHTML = `
+                  <td>${cita.paciente}</td>
+                  <td>${cita.doctor}</td>
+                  <td>${new Date(cita.fecha).toLocaleDateString()}</td>
+                  <td>${cita.estado}</td>
+              `;
+              tabla.appendChild(fila);
+          });
+      })
+      .catch(error => {
+          console.error("Error cargando citas recientes:", error);
+          let tabla = document.getElementById("citas-recientes");
+          if (tabla) {
+              tabla.innerHTML = `<tr><td colspan="4">Error al cargar datos</td></tr>`;
+          }
+      });
+}

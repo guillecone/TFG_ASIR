@@ -18,7 +18,7 @@ app.add_middleware(
 )
 
 # ✅ Función para conectar a MySQL
-def conectar_db():
+def get_db_connection():
     return mysql.connector.connect(
         host=os.getenv("DB_HOST", "localhost"),
         user=os.getenv("DB_USER", "root"),
@@ -29,53 +29,67 @@ def conectar_db():
 # ✅ Endpoint principal
 @app.get("/")
 def home():
-    return {"mensaje": "Bienvenido a la API de ConesaDental"}
+    return {"mensaje": "API de ConesaDental funcionando correctamente"}
 
 # ✅ 1️⃣ Ingresos Mensuales
 @app.get("/ingresos")
 def obtener_ingresos():
     try:
-        conn = conectar_db()
+        conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-
-        # ✅ Ahora ordenamos por año y mes en lugar de fecha
-        cursor.execute("SELECT total_ingresos FROM ingresos ORDER BY año DESC, mes DESC LIMIT 1")
-        
+        cursor.execute("SELECT SUM(total_ingresos) AS total_ingresos FROM ingresos")
         resultado = cursor.fetchone()
         conn.close()
 
-        if resultado:
-            return resultado
+        if resultado and resultado["total_ingresos"] is not None:
+            return {"total_ingresos": resultado["total_ingresos"]}
         else:
-            return {"total_ingresos": 0}  # Si no hay datos, devuelve 0
-    except mysql.connector.Error as err:
-        return {"error": str(err)}
+            return {"total_ingresos": 0}
 
+    except Exception as e:
+        return {"error": str(e)}
     
 # ✅ 2️⃣ Nuevos Pacientes
 @app.get("/nuevos-pacientes")
 def nuevos_pacientes():
-    conn = conectar_db()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT COUNT(*) AS total_pacientes FROM pacientes")
-    resultado = cursor.fetchone()
-    conn.close()
-    return [resultado]
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT COUNT(*) AS total_pacientes FROM pacientes")
+        resultado = cursor.fetchone()
+        conn.close()
+
+        return resultado if resultado else {"total_pacientes": 0}
+
+    except Exception as e:
+        return {"error": str(e)}
 
 # ✅ 3️⃣ Citas por Doctor
 @app.get("/citas/doctores")
 def citas_por_doctor():
-    conn = conectar_db()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
+    try:
+        conn = mysql.connector.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
+        )
+        cursor = conn.cursor(dictionary=True)
+
+        query = """
         SELECT d.nombre AS doctor, COUNT(c.id) AS total_citas
         FROM citas c
         JOIN doctores d ON c.doctor_id = d.id
-        GROUP BY c.doctor_id
-    """)
-    resultado = cursor.fetchall()
-    conn.close()
-    return resultado
+        GROUP BY d.nombre
+        """
+        cursor.execute(query)
+        resultado = cursor.fetchall()
+        
+        conn.close()
+        return resultado
+
+    except Exception as e:
+        return {"error": str(e)}
 
 # ✅ 4️⃣ Tiempo Medio entre Consultas
 @app.get("/tiempo-consultas")
@@ -121,18 +135,32 @@ def citas_atendidas_vs_canceladas():
 # ✅ 6️⃣ Tratamientos Más Demandados
 @app.get("/tratamientos-mas-demandados")
 def tratamientos_mas_demandados():
-    conn = conectar_db()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT t.nombre AS tratamiento, COUNT(ct.tratamiento_id) AS cantidad
+    try:
+        conn = mysql.connector.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
+        )
+        cursor = conn.cursor(dictionary=True)
+
+        # 🔹 Consulta para obtener los tratamientos más demandados
+        query = """
+        SELECT t.nombre AS tratamiento, COUNT(ct.id) AS cantidad
         FROM citas_tratamientos ct
         JOIN tratamientos t ON ct.tratamiento_id = t.id
-        GROUP BY t.id
+        GROUP BY t.nombre
         ORDER BY cantidad DESC
-    """)
-    resultado = cursor.fetchall()
-    conn.close()
-    return resultado
+        """
+        cursor.execute(query)
+        resultado = cursor.fetchall()
+
+        conn.close()
+        return resultado
+
+    except Exception as e:
+        return {"error": str(e)}
+
 
 # ✅ 7️⃣ Lista de Doctores
 @app.get("/doctores")
@@ -144,6 +172,38 @@ def doctores():
     conn.close()
     return resultado
 
+from fastapi import HTTPException
+
+@app.get("/citas-recientes")
+def citas_recientes():
+    try:
+        conn = mysql.connector.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
+        )
+        cursor = conn.cursor(dictionary=True)
+
+        # 🔹 Consulta para obtener las últimas citas con información del paciente y doctor
+        query = """
+        SELECT c.fecha, c.estado, p.nombre AS paciente, d.nombre AS doctor
+        FROM citas c
+        JOIN pacientes p ON c.paciente_id = p.id
+        JOIN doctores d ON c.doctor_id = d.id
+        ORDER BY c.fecha DESC
+        LIMIT 5
+        """
+        cursor.execute(query)
+        resultado = cursor.fetchall()
+
+        conn.close()
+        return resultado
+
+    except Exception as e:
+        return {"error": str(e)}
+
+    
 # ✅ Iniciar el servidor
 if __name__ == "__main__":
     import uvicorn
