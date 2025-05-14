@@ -1,0 +1,11 @@
+Número de nuevos pacientes: Cantidad de pacientes nuevos en un periodo específico. Gráfico de líneas
+
+Tratamientos realizados: Distribución de los tipos de tratamientos realizados (limpiezas, empastes, ortodoncia, etc.). Gráfico de barras apiladas
+
+Costos operativos: Costo de insumos dentales, salarios, alquiler, etc. Gráfico de áreas
+
+Número de consultas realizadas por dentista: Productividad de cada miembro del personal dental. Gráfico de barras horizontales
+
+Nivel de stock de materiales: Cómo está el inventario de insumos dentales (como materiales de empaste, hilos, anestesia, etc.). Gráfico de indicadores (o de "semáforo")
+
+Crecimiento en ventas por tipo de tratamiento: Análisis de qué tratamientos están ganando popularidad o perdiendo demanda. Gráfico de burbujas

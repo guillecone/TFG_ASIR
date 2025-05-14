@@ -1,0 +1,7 @@
+Filtros dinámicos (por fecha, paciente, doctor)
+Alertas y notificaciones (bajo stock de medicamentos, citas pendientes)
+Optimización del rendimiento (carga más rápida, caché)
+Agregar gráficos 
+Mejorar el diseño 
+Añadir más secciones 
+Optimizar la base de datos 

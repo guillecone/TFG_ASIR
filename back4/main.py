@@ -34,28 +34,20 @@ def home():
 # ✅ 1️⃣ Ingresos Mensuales
 @app.get("/ingresos")
 def obtener_ingresos():
-    conn = mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME")
-    )
-    cursor = conn.cursor(dictionary=True)
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT SUM(total_ingresos) AS total_ingresos FROM ingresos")
+        resultado = cursor.fetchone()
+        conn.close()
 
-    # 🔹 Obtener ingresos por mes
-    query = """
-    SELECT mes, total_ingresos 
-    FROM ingresos 
-    WHERE año = YEAR(CURDATE())
-    ORDER BY mes ASC
-    """
-    cursor.execute(query)
-    resultados = cursor.fetchall()
-    
-    conn.close()
+        if resultado and resultado["total_ingresos"] is not None:
+            return {"total_ingresos": resultado["total_ingresos"]}
+        else:
+            return {"total_ingresos": 0}
 
-    return resultados  # 🔹 Devolver una lista de ingresos por mes
-
+    except Exception as e:
+        return {"error": str(e)}
     
 # ✅ 2️⃣ Nuevos Pacientes
 @app.get("/nuevos-pacientes")

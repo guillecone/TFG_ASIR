@@ -347,7 +347,18 @@ document.addEventListener("DOMContentLoaded", function () {
   cards.forEach(card => observer.observe(card));
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+  const sidebar = document.querySelector(".sidebar");
+  const toggleBtn = document.createElement("button");
 
+  toggleBtn.innerHTML = "☰";
+  toggleBtn.classList.add("sidebar-toggle");
+  document.body.appendChild(toggleBtn);
+
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("active");
+  });
+});
 
 function cargarCitasRecientes() {
   fetch("http://127.0.0.1:8000/citas-recientes")

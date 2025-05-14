@@ -1,0 +1,32 @@
+Optimización de Visualización
+Ingresos Mensuales 💰 → Gráfico de Línea o Área (Line Chart/Area Chart)
+
+📊 Por qué: Muestra tendencias de ingresos a lo largo del tiempo.
+📌 Cómo: Gráfico de línea con un degradado suave en el fondo para hacerlo más atractivo.
+Nuevos Pacientes 👥 → Tarjeta con icono dinámico
+
+📊 Por qué: No es necesario un gráfico si solo hay un número.
+📌 Cómo: Tarjeta con un icono animado de paciente 🏥 que resalta cuando crece.
+
+
+Citas por Doctor 🩺 → Gráfico de Barras Horizontales
+
+📊 Por qué: Permite comparar el número de citas de cada doctor de forma clara.
+📌 Cómo: Un bar chart horizontal con colores diferenciados.
+
+Tiempo Medio Entre Consultas ⏳ → Indicador de Progreso o Tarjeta con Icono
+
+📊 Por qué: Un número exacto no es intuitivo.
+📌 Cómo: Barra de progreso con código de colores (verde si es rápido, rojo si es lento).
+
+
+Citas Atendidas vs. Canceladas 📆 → Gráfico de Anillos o Donut Chart
+
+📊 Por qué: Muestra una comparación fácil de entender.
+📌 Cómo: Un donut chart con colores representando atendidas ✅ y canceladas ❌.
+
+
+Tratamientos más Demandados 🦷 → Gráfico de Columnas Verticales
+
+📊 Por qué: Muestra fácilmente qué tratamientos son los más comunes.
+📌 Cómo: Column chart con cada tratamiento representado con colores distintos.

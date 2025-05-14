@@ -1,0 +1,25 @@
+Linux PCconedental 5.15.167.4-microsoft-standard-WSL2 #1 SMP Tue Nov 5 00:21:55 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+
+Architecture:             x86_64
+  CPU op-mode(s):         32-bit, 64-bit
+  Address sizes:          39 bits physical, 48 bits virtual
+  Byte Order:             Little Endian
+CPU(s):                   8
+  On-line CPU(s) list:    0-7
+Vendor ID:                GenuineIntel
+  Model name:             11th Gen Intel(R) Core(TM) i5-1155G7 @ 2.50GHz
+    CPU family:           6
+    Model:                140
+    Thread(s) per core:   2
+    Core(s) per socket:   4
+    Socket(s):            1
+
+
+5.15.167.4-microsoft-standard-WSL2
+
+Distributor ID: Ubuntu
+Description:    Ubuntu 24.04.1 LTS
+Release:        24.04
+Codename:       noble
+
+admin_conedental pts/1
